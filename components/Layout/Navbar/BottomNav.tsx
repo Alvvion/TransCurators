@@ -64,7 +64,7 @@ const BottomNav = () => {
     <div
       className={cn(
         "w-full bg-white shadow-sm transition-all duration-500",
-        isFixed && "fixed top-0 left-0 z-50"
+        isFixed && "fixed top-0 left-0 z-50 fixed-nav"
       )}
     >
       <div className="flex items-center justify-between px-[8%] lg:px-[12%] text-gray-700">
@@ -79,7 +79,7 @@ const BottomNav = () => {
           Shop<span className="text-(--primary-color)">Mart</span>
         </Link>
 
-        <nav className="hidden lg:flex space-x-6 relative">
+        <nav className="hidden lg:flex space-x-6 relative menu-link">
           {navLinks.map((link) =>
             link.dropdown ? (
               <div key={link.label} className="relative group z-9999">
@@ -133,7 +133,7 @@ const BottomNav = () => {
               </span>
             </Link>
           </div>
-          <button className="cursor-pointer font-bold bg-(--primary-color) text-white p-3 gap-2">
+          <button className="nav-button cursor-pointer font-bold bg-(--primary-color) text-white p-3 gap-2">
             <PhoneIcon className="text-xl" />
           </button>
         </div>
@@ -170,7 +170,7 @@ const BottomNav = () => {
                         <Link
                           key={item.label}
                           href={item.href}
-                          className="block p-2 font-medium rounded-md hover:bg-gray-100"
+                          className="block p-2 font-medium rounded-md bg-white hover:bg-gray-100"
                         >
                           {item.label}
                         </Link>
