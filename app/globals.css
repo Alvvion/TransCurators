@@ -148,6 +148,37 @@
   transform: scale(1.1);
 }
 
+/* Offers */
+
+.offer-wrap {
+  background-color: var(--primary-color);
+  position: relative;
+  z-index: 5;
+}
+
+.offer-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../public/offer-shape.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  border-radius: 20px;
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.off-product {
+  border-top-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 /* Media Querires */
 
 @media (max-width: 991px) {

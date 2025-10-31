@@ -16,10 +16,25 @@ import Category7 from "@/public/Category7.png";
 import Category8 from "@/public/Category8.png";
 import Category9 from "@/public/Category9.png";
 import Category10 from "@/public/Category10.png";
+import Offer1 from "@/public/offer-img1.png";
+import Offer2 from "@/public/offer-img2.png";
 
 type BannerType = {
   image: StaticImageData;
   heading: string;
+};
+
+type DealItem = {
+  image: StaticImageData;
+  title: string;
+  description: string;
+  className?: string;
+};
+
+type CategoryType = {
+  image: StaticImageData;
+  title: string;
+  product: string;
 };
 
 export const banners: BannerType[] = [
@@ -28,13 +43,6 @@ export const banners: BannerType[] = [
   { image: PromotionBanner3, heading: "Everyday\nFresh Milk" },
   { image: PromotionBanner4, heading: "Everyday\nFresh Fruits" },
 ];
-
-type DealItem = {
-  image: StaticImageData;
-  title: string;
-  description: string;
-  className?: string;
-};
 
 export const dealData: DealItem[] = [
   {
@@ -58,12 +66,6 @@ export const dealData: DealItem[] = [
   },
 ];
 
-type CategoryType = {
-  image: StaticImageData;
-  title: string;
-  product: string;
-};
-
 export const categories: CategoryType[] = [
   { image: Category1, title: "Vegetables", product: "125+ Products" },
   { image: Category2, title: "Fish & Meats", product: "90+ Products" },
@@ -75,4 +77,19 @@ export const categories: CategoryType[] = [
   { image: Category8, title: "Dairy & Eggs", product: "45+ Products" },
   { image: Category9, title: "Snacks", product: "110+ Products" },
   { image: Category10, title: "Frozen Foods", product: "40+ Products" },
+];
+
+export const offers: DealItem[] = [
+  {
+    image: Offer1,
+    title: "Special Weekend Offer",
+    description:
+      "Get up to 30% off on select products every weekend. Limited time only!",
+  },
+  {
+    image: Offer2,
+    title: "Buy 1 Get 1 Free",
+    description:
+      "Enjoy exclusive Buy 1 Get 1 Free deals on your favorite snacks and drinks.",
+  },
 ];
