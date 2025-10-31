@@ -20,7 +20,7 @@ const MiddleNav = () => {
           <input
             type="text"
             placeholder="Search for a Product"
-            className="flex-1 border px-3 py-2 rounded-s-lg border-gray-400 outline-none"
+            className="flex-1 border px-3 py-2 rounded-s-lg border-gray-400 outline-none w-full"
           />
           <button className="bg-(--primary-color) text-white px-3 rounded-r cursor-pointer">
             <SearchIcon className="" />

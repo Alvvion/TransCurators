@@ -147,3 +147,18 @@
     width: 100%;
   }
 }
+
+/* Categories */
+.category-wrap:hover img {
+  transform: scale(1.1);
+}
+
+.category-image {
+  width: 140px;
+  height: 140px;
+  background-color: var(--primary-light);
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
