@@ -19,7 +19,7 @@ const MiddleNav = () => {
         <div className="flex flex-1 ms-6 lg:mx-0 max-w-xl relative">
           <input
             type="text"
-            placeholder="Search for a Product or Brand"
+            placeholder="Search for a Product"
             className="flex-1 border px-3 py-2 rounded-s-lg border-gray-400 outline-none"
           />
           <button className="bg-(--primary-color) text-white px-3 rounded-r cursor-pointer">
