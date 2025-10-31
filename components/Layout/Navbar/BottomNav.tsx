@@ -98,19 +98,19 @@ const BottomNav: React.FC<BottomNavProps> = ({ cartCount, wishlistCount }) => {
             </div>
           </button>
           <div className="flex lg:hidden items-center space-x-6">
-            <Link href="#" className="relative">
+            <Link href="/wishlist" className="relative">
               <HeartIcon className="text-gray-600 text-xl hover:text-(--primary-color) transition-colors" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-(--primary-color) text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-            <Link href="#" className="relative">
-              <ShoppingCartIcon className="text-gray-600 text-xl hover:text-(--primary-color) transition-colors" />
               {wishlistCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-(--primary-color) text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                   {wishlistCount}
+                </span>
+              )}
+            </Link>
+            <Link href="/cart" className="relative">
+              <ShoppingCartIcon className="text-gray-600 text-xl hover:text-(--primary-color) transition-colors" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-(--primary-color) text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {cartCount}
                 </span>
               )}
             </Link>

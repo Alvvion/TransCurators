@@ -101,7 +101,7 @@ const MiddleNav: React.FC<MiddleNavProps> = ({ cartCount, wishlistCount }) => {
         </div>
         {/* Wishlist & Cart */}
         <div className="hidden lg:flex items-center space-x-6">
-          <Link href="#" className="relative">
+          <Link href="/wishlist" className="relative">
             <HeartIcon className="text-gray-600 text-xl hover:text-(--primary-color) transition-colors" />
             {wishlistCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-(--primary-color) text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
@@ -109,7 +109,7 @@ const MiddleNav: React.FC<MiddleNavProps> = ({ cartCount, wishlistCount }) => {
               </span>
             )}
           </Link>
-          <Link href="#" className="relative">
+          <Link href="/cart" className="relative">
             <ShoppingCartIcon className="text-gray-600 text-xl hover:text-(--primary-color) transition-colors" />
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-(--primary-color) text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
