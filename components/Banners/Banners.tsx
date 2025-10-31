@@ -17,7 +17,7 @@ const Banners = () => {
               <h2 className="Merienda font-bold text-3xl leading-11 whitespace-pre-line">
                 {banner.heading}
               </h2>
-              <button className="px-5 py-3 rounded-full text-white font-bold mt-5 bg-(--primary-color) flex justify-center items-center">
+              <button className="px-5 py-3 rounded-full text-white font-bold mt-5 bg-(--primary-color) flex justify-center items-center hover:bg-white hover:text-(--prim-color) transition-all duration-300 cursor-pointer">
                 Shop Now
                 <ArrowRightIcon className="ps-2" />
               </button>

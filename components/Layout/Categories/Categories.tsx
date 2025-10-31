@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
-import { categories } from "@/constants/categories";
+import { categories } from "@/constants/banners";
 
 const Categories = () => {
   return (
