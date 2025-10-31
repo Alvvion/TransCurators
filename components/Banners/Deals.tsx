@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-type Product = {
+export type Product = {
   Id: string;
   image: string;
   title: string;

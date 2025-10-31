@@ -138,6 +138,16 @@
   background-image: url(../public/Deals-bg2.png);
 }
 
+/* Products */
+
+.product-wrap img {
+  transition: var(--transition-regular);
+}
+
+.product-wrap:hover img {
+  transform: scale(1.1);
+}
+
 /* Media Querires */
 
 @media (max-width: 991px) {

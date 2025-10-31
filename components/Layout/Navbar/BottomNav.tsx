@@ -1,4 +1,5 @@
 "use client";
+
 import cn from "@/utils/cn";
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
@@ -11,7 +12,12 @@ import {
 } from "lucide-react";
 import { navLinks } from "@/constants/navlinks";
 
-const BottomNav = () => {
+type BottomNavProps = {
+  cartCount: number;
+  wishlistCount: number;
+};
+
+const BottomNav: React.FC<BottomNavProps> = ({ cartCount, wishlistCount }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdowns, setOpenDropDowns] = useState<Record<string, boolean>>(
     {}
@@ -94,15 +100,19 @@ const BottomNav = () => {
           <div className="flex lg:hidden items-center space-x-6">
             <Link href="#" className="relative">
               <HeartIcon className="text-gray-600 text-xl hover:text-(--primary-color) transition-colors" />
-              <span className="absolute -top-2 -right-2 bg-(--primary-color) text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                1
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-(--primary-color) text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {cartCount}
+                </span>
+              )}
             </Link>
             <Link href="#" className="relative">
               <ShoppingCartIcon className="text-gray-600 text-xl hover:text-(--primary-color) transition-colors" />
-              <span className="absolute -top-2 -right-2 bg-(--primary-color) text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                1
-              </span>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-(--primary-color) text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
           </div>
           <button className="nav-button cursor-pointer font-bold bg-(--primary-color) text-white p-3 gap-2">
