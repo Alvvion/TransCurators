@@ -1,7 +1,8 @@
 "use server";
 
 import User from "@/models/UserSchema";
-import jwt from "jsonwebtoken";
+import { dbConnect } from "@/utils/db";
+import { createSession } from "./session";
 
 export async function register(formData: FormData) {
   const user = {
@@ -14,6 +15,7 @@ export async function register(formData: FormData) {
     if (!user.email || !user.password || !user.name) {
       throw new Error("All fields are required.");
     }
+    dbConnect();
     const existingUser = await User.findOne({ email: user.email });
 
     if (existingUser) {
@@ -29,9 +31,8 @@ export async function register(formData: FormData) {
         name: newUser.name,
       },
     };
-    const token = jwt.sign(payload, process.env.JWT_SECRET || "hello", {
-      expiresIn: "1d",
-    });
+
+    const token = await createSession(payload);
 
     return {
       message: "Registered Successfully",
@@ -53,7 +54,7 @@ export async function login(formData: FormData) {
     if (!user.email || !user.password) {
       throw new Error("Email and password are required.");
     }
-
+    dbConnect();
     const existingUser = await User.findOne({ email: user.email });
 
     if (!existingUser) {
@@ -73,9 +74,8 @@ export async function login(formData: FormData) {
         name: existingUser.name,
       },
     };
-    const token = jwt.sign(payload, process.env.JWT_SECRET || "hello", {
-      expiresIn: "1d",
-    });
+
+    const token = await createSession(payload);
 
     return {
       message: "Registered Successfully",

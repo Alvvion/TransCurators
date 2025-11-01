@@ -1,4 +1,8 @@
-const Login = () => {
+"use server";
+
+import { loginAction, registerAction } from "@/actions/actions";
+
+const SignIn = async () => {
   return (
     <>
       <div className="px-[8%] lg:px-[12%] bg-[#e6f9ef] py-5">
@@ -11,7 +15,7 @@ const Login = () => {
           {/* Login */}
           <div className="w-full lg:w-1/2 gap-3 border border-gray-300 px-5 py-8 rounded-lg hover:border-(--primary-color)">
             <h2 className="Unbounded text-xl mb-10 text-center">Login</h2>
-            <form>
+            <form action={loginAction}>
               <div className="flex flex-col mb-5 gap-2">
                 <label htmlFor="email" className="Unbounded mb-2">
                   Email *
@@ -33,7 +37,10 @@ const Login = () => {
                 />
               </div>
               <div className="flex items-center gap-5 mb-8">
-                <button className="px-8 py-3 rounded-md text-white Unbounded bg-(--primary-color) mx-auto">
+                <button
+                  type="submit"
+                  className="px-8 py-3 rounded-md text-white Unbounded bg-(--primary-color) mx-auto"
+                >
                   Login
                 </button>
               </div>
@@ -42,10 +49,10 @@ const Login = () => {
           {/* Register */}
           <div className="w-full lg:w-1/2 gap-3 border border-gray-300 px-5 py-8 rounded-lg hover:border-(--primary-color)">
             <h2 className="Unbounded text-xl mb-10 text-center">Login</h2>
-            <form>
+            <form action={registerAction}>
               <div className="flex flex-col mb-5 gap-2">
                 <label htmlFor="name" className="Unbounded mb-2">
-                  Email *
+                  Name *
                 </label>
                 <input
                   type="text"
@@ -73,8 +80,11 @@ const Login = () => {
                 />
               </div>
               <div className="flex items-center gap-5 mb-8">
-                <button className="px-8 py-3 rounded-md text-white Unbounded bg-(--primary-color) mx-auto">
-                  Login
+                <button
+                  type="submit"
+                  className="px-8 py-3 rounded-md text-white Unbounded bg-(--primary-color) mx-auto"
+                >
+                  Register
                 </button>
               </div>
             </form>
@@ -85,4 +95,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignIn;

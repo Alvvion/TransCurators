@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 
 import SatisfactionIcon from "@/public/satisfaction-icon.png";
-import Deals from "../Banners/Deals";
 import Recommend from "./Recommend";
 
 type ProductDetailsProps = {
