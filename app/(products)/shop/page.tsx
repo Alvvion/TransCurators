@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductDetails from "@/components/Products/ProductDetails";
 import Products from "@/components/Products/Products";
@@ -27,6 +27,17 @@ export type AllProduct = {
   sale?: string;
 };
 
+const ShopContent = ({ allProducts }: { allProducts: AllProduct[] }) => {
+  const searchParams = useSearchParams(); // ✅ now inside Suspense
+  const productId = searchParams.get("id");
+
+  return productId ? (
+    <ProductDetails id={productId} products={allProducts} />
+  ) : (
+    <Products products={allProducts} />
+  );
+};
+
 const Shop = () => {
   const allProducts: AllProduct[] = useMemo(
     () => [
@@ -43,16 +54,11 @@ const Shop = () => {
     ],
     []
   );
-  const searchParams = useSearchParams();
-  const productId = searchParams.get("id");
+
   return (
-    <div className="">
-      {productId ? (
-        <ProductDetails id={productId} products={allProducts} />
-      ) : (
-        <Products products={allProducts} />
-      )}
-    </div>
+    <Suspense fallback={<div>Loading shop...</div>}>
+      <ShopContent allProducts={allProducts} />
+    </Suspense>
   );
 };
 

@@ -49,8 +49,8 @@ const MiddleNav = () => {
     );
   }, [allProducts, searchTerm]);
 
-  const { cartCount } = useCartStore();
-  const { wishlistCount } = useWishlistStore();
+  const cartCount = useCartStore((state) => state.cartCount);
+  const wishlistCount = useWishlistStore((state) => state.wishlistCount);
 
   return (
     <nav className="w-full bg-(--primary-light) border-b border-gray-300 relative">

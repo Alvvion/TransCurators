@@ -11,17 +11,15 @@ import {
   ShoppingCartIcon,
 } from "lucide-react";
 import { navLinks } from "@/constants/navlinks";
+import { useCartStore, useWishlistStore } from "@/utils/store";
 
-type BottomNavProps = {
-  cartCount: number;
-  wishlistCount: number;
-};
-
-const BottomNav: React.FC<BottomNavProps> = ({ cartCount, wishlistCount }) => {
+const BottomNav = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdowns, setOpenDropDowns] = useState<Record<string, boolean>>(
     {}
   );
+  const cartCount = useCartStore((state) => state.cartCount);
+  const wishlistCount = useWishlistStore((state) => state.wishlistCount);
   const [isFixed, setIsFixed] = useState(false);
 
   const toggleDropdown = (label: string) =>
