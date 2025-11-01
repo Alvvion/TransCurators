@@ -1,0 +1,34 @@
+[
+  {
+    "Id": "OnSale1",
+    "image": "/shortProduct/short-product-img9.png",
+    "title": "Taylor Farms Broccoli fresh Fruits",
+    "price": "$15.99",
+    "lessprice": "$28.99",
+    "review": "(17k)"
+  },
+  {
+    "Id": "OnSale2",
+    "image": "/shortProduct/short-product-img2.png",
+    "title": "Taylor Farms Broccoli Florets Fruits",
+    "price": "$18.99",
+    "lessprice": "$20.99",
+    "review": "(17k)"
+  },
+  {
+    "Id": "OnSale3",
+    "image": "/shortProduct/short-product-img3.png",
+    "title": "Taylor Farms Broccoli Florets Vegetables",
+    "price": "$18.99",
+    "lessprice": "$32.99",
+    "review": "(17k)"
+  },
+  {
+    "Id": "OnSale4",
+    "image": "/shortProduct/short-product-img4.png",
+    "title": "Taylor Farms Broccoli Florets Fruits",
+    "price": "$20.99",
+    "lessprice": "$30.99",
+    "review": "(17k)"
+  }
+]
