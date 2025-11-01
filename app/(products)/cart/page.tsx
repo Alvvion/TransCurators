@@ -1,46 +1,49 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
-import type { Product } from "@/components/Banners/Deals";
+import { useState, useEffect } from "react";
 import { StarIcon } from "lucide-react";
+import { getCart } from "@/actions/products";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { useUserStore } from "@/utils/store";
 
-type CartItem = Product & {
-  qty?: number;
+export type CartItem = {
+  Id: string;
+  title: string;
+  image: string;
+  price: number;
+  quantity: number;
 };
 
 const Cart = () => {
-  const [cartItem, setCartItem] = useState<CartItem[]>([
-    {
-      Id: "BestDeals1",
-      image: "/BestDeals/product-img1.png",
-      title: "Fresh Eggplant & Cucumber Mix",
-      price: "$14.99",
-      lessprice: "$28.99",
-      review: "(17k)",
-      sold: "18/35",
-    },
-    {
-      Id: "BestDeals2",
-      image: "/BestDeals/product-img2.png",
-      title: "Organic Beets with Greens",
-      price: "$12.99",
-      lessprice: "$22.99",
-      review: "(12k)",
-      sold: "22/40",
-    },
-  ]);
+  const [cartItem, setCartItem] = useState<CartItem[]>([]);
   const [subTotal, setSubTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const user = useUserStore((state) => state.user);
 
-  //   const handleSubTotal = useCallback(() => {
-  //     const total = cartItem.reduce((acc: number, item: CartItem) => {
-  //       const quantity = item.qty ?? 1;
-  //       const priceNum = parseFloat(item.price.replace(/[^0-9.-]+/g, "")) || 0;
-  //       return acc + priceNum * quantity;
-  //     }, 0);
-  //     setSubTotal(total);
-  //   }, [cartItem]);
+  useEffect(() => {
+    const loadCart = async () => {
+      setLoading(true);
+      try {
+        const formData = new FormData();
+        formData.append("userId", user.id);
+        formData.append("guest", user.name === "Guest" ? "true" : "false");
+        const result = await getCart(formData);
+        if (result.status) {
+          setCartItem(result.cart);
+          setSubTotal(result.total);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("failed to load cart");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCart();
+  }, [user.id, user.name]);
 
   return (
     <div>
@@ -52,8 +55,10 @@ const Cart = () => {
         </div>
       </div>
       <div className="px-[8%] lg:px-[12%] py-10">
-        {cartItem.length === 0 ? (
-          <p className="text-lg bg-red-200 px-5 py-2">Your Wishlist is empty</p>
+        {loading || cartItem.length === 0 ? (
+          <p className="text-lg bg-red-200 px-5 py-2">
+            {loading ? "Cart is loading" : "Cart is empty"}
+          </p>
         ) : (
           <div className="flex flex-col lg:flex-row gap-10">
             <div className="flex-1 overflow-x-auto">
@@ -80,10 +85,9 @@ const Cart = () => {
                   </thead>
                   <tbody>
                     {cartItem.map((item: CartItem) => {
-                      const quantity = item.qty ?? 1;
-                      const priceNum =
-                        parseFloat(item.price.replace(/[^0-9.-]+/g, "")) || 0;
-                      const itemSubtotal = priceNum * quantity;
+                      const itemizedTotal = Number(
+                        item.price * item.quantity
+                      ).toFixed(2);
                       return (
                         <tr key={item.Id} className="border-b border-gray-300">
                           <td className="py-3 px-4 flex items-center gap-3">
@@ -98,24 +102,24 @@ const Cart = () => {
                               </p>
                               <span className="flex items-center text-base text-yellow-500">
                                 <StarIcon className="fill-yellow-500 size-4" />
-                                {item.review}
+                                (17+)
                               </span>
                             </div>
                           </td>
-                          <td className="Unbounded py-3 px-4">${priceNum}</td>
+                          <td className="Unbounded py-3 px-4">${item.price}</td>
                           <td className="py-3 px-4">
                             <div className="flex items-center border w-24 justify-around">
                               <button className="flex text-lg cursor-pointer">
                                 -
                               </button>
-                              <span className="px-4">{quantity}</span>
+                              <span className="px-4">{item.quantity}</span>
                               <button className="flex text-lg cursor-pointer">
                                 +
                               </button>
                             </div>
                           </td>
                           <td className="Unbounded py-3 px-4">
-                            ${itemSubtotal}
+                            ${itemizedTotal}
                           </td>
                           <td className="py-3 px-4 text-center">
                             <button className="text-red-500 hover:text-red-700 cursor-pointer flex items-center justify-center Unbounded">
@@ -129,51 +133,58 @@ const Cart = () => {
                 </table>
                 {/* Mobile View */}
                 <div className="lg:hidden space-y-4">
-                  {cartItem.map((item) => (
-                    <div
-                      key={item.Id}
-                      className="border border-gray-300 p-4 bg-white"
-                    >
-                      <div className="flex items-center gap-3 mb-3">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="object-contain "
-                        />
-                        <div>
-                          <p className="Unbounded font-medium text-lg">
-                            {item.title}
-                          </p>
-                          <span className="flex items-center text-sm text-yellow-500">
-                            <StarIcon className="fill-yellow-500 size-4 me-1" />
-                            {item.review}
-                          </span>
+                  {cartItem.map((item) => {
+                    const itemizedTotal = Number(
+                      item.price * item.quantity
+                    ).toFixed(2);
+                    return (
+                      <div
+                        key={item.Id}
+                        className="border border-gray-300 p-4 bg-white"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="object-contain "
+                          />
+                          <div>
+                            <p className="Unbounded font-medium text-lg">
+                              {item.title}
+                            </p>
+                            <span className="flex items-center text-sm text-yellow-500">
+                              <StarIcon className="fill-yellow-500 size-4 me-1" />
+                              (17+)
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="Unbounded text-sm my-4">
-                            Price: {item.price}
-                          </p>
-                          <div className="flex items-center border w-24 justify-around">
-                            <button className="flex text-lg cursor-pointer">
-                              -
-                            </button>
-                            <span className="px-4">1</span>
-                            <button className="flex text-lg cursor-pointer">
-                              +
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="Unbounded text-sm my-4">
+                              Price: {item.price}
+                            </p>
+                            <div className="flex items-center border w-24 justify-around">
+                              <button className="flex text-lg cursor-pointer">
+                                -
+                              </button>
+                              <span className="px-4">{item.quantity}</span>
+                              <button className="flex text-lg cursor-pointer">
+                                +
+                              </button>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="Unbounded text-sm my-4">
+                              {itemizedTotal}
+                            </p>
+                            <button className="text-red-500 hover:text-red-700 cursor-pointer flex items-center justify-center Unbounded">
+                              Delete
                             </button>
                           </div>
                         </div>
-                        <div>
-                          <p className="Unbounded text-sm my-4">{item.price}</p>
-                          <button className="text-red-500 hover:text-red-700 cursor-pointer flex items-center justify-center Unbounded">
-                            Delete
-                          </button>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -182,7 +193,7 @@ const Cart = () => {
                 <h2 className="text-xl font-semibold mb-4">Cart Total</h2>
                 <div className="flex justify-between mb-2">
                   <span className="Unbounded">Subtotal</span>
-                  <span className="Unbounded">$123</span>
+                  <span className="Unbounded">${subTotal}</span>
                 </div>
                 <div className="flex justify-between mb-2">
                   <span className="Unbounded">Estimated Delivery</span>
@@ -194,7 +205,9 @@ const Cart = () => {
                 </div>
                 <div className="flex justify-between mb-2 font-bold border-t border-gray-400 pt-2 text-lg">
                   <span className="Unbounded">Total</span>
-                  <span className="Unbounded">$150</span>
+                  <span className="Unbounded">
+                    ${Number(subTotal + 10).toFixed(2)}
+                  </span>
                 </div>
                 <Link
                   className="bg-(--primary-color) text-white font-semibold w-full py-3 hover:bg-black transition-colors cursor-pointer flex justify-center items-center"

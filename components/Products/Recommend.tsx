@@ -1,15 +1,33 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import products from "@/constants/Recommend.json";
 import type { Product } from "../Banners/Deals";
 import { HeartIcon, ShoppingCartIcon, StarIcon } from "lucide-react";
 import Link from "next/link";
 import cn from "@/utils/cn";
+import { useCartStore, useUserStore, useWishlistStore } from "@/utils/store";
+import { handleAddToCart, handleAddToWishlist } from "@/utils/clientFunctions";
 
 type SaleProduct = Product & {
   sale: string;
 };
 
 const Recommend = () => {
+  const user = useUserStore((state) => state.user);
+  const incrementCart = useCartStore((state) => state.incrementCart);
+  const incrementWishlist = useWishlistStore(
+    (state) => state.incrementWishlist
+  );
+  const decrementWishlist = useWishlistStore(
+    (state) => state.decrementWishlist
+  );
+
+  const [wishlistedProduct, setWishlistedProduct] = useState(
+    Array(products.length).fill(false)
+  );
+
   return (
     <div className="px-[8%] lg:px-[12%] py-10">
       <div className="title my-10  w-full flex flex-col  lg:flex-row justify-between items-start gap-5">
@@ -19,7 +37,7 @@ const Recommend = () => {
       {/* Products */}
       <div className="my-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          {products.map((product: SaleProduct) => (
+          {products.map((product: SaleProduct, i: number) => (
             <div
               key={product.Id}
               className="product-wrap border border-gray-300 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-all hover:border-(--primary-color) cursor-pointer duration-300"
@@ -32,8 +50,29 @@ const Recommend = () => {
                   height={180}
                   className="object-contain mt-10"
                 />
-                <button className="absolute top-0 left-0 w-12 h-12 rounded-full text-(--primary-color) hover:bg-(--primary-color) hover:text-white transition-colors duration-300 flex justify-center items-center">
-                  <HeartIcon className="text-xl" />
+                <button
+                  onClick={() => {
+                    handleAddToWishlist(
+                      product,
+                      user.id,
+                      incrementWishlist,
+                      decrementWishlist,
+                      user.name === "Guest" ? "true" : "false"
+                    );
+                    setWishlistedProduct((prev) => {
+                      const updated = [...prev];
+                      updated[i] = !updated[i];
+                      return updated;
+                    });
+                  }}
+                  className="absolute top-0 left-0 w-12 h-12 rounded-full text-(--primary-color) hover:bg-(--primary-color) hover:text-white transition-colors duration-300 flex justify-center items-center"
+                >
+                  <HeartIcon
+                    className={cn(
+                      "text-xl",
+                      wishlistedProduct[i] && "fill-red-600 text-red-600"
+                    )}
+                  />
                 </button>
                 <span
                   className={cn(
@@ -76,7 +115,17 @@ const Recommend = () => {
                   Sold: {product.sold}
                 </p>
               </Link>
-              <button className="w-full px-4 my-2 text-lg font-semibold text-(--primary-color) bg-(--primary-light) rounded-md hover:bg-(--primary-color) hover:text-white cursor-pointer transition-all flex justify-center items-center py-3">
+              <button
+                onClick={() =>
+                  handleAddToCart(
+                    product,
+                    user.id,
+                    incrementCart,
+                    user.name === "Guest" ? "true" : "false"
+                  )
+                }
+                className="w-full px-4 my-2 text-lg font-semibold text-(--primary-color) bg-(--primary-light) rounded-md hover:bg-(--primary-color) hover:text-white cursor-pointer transition-all flex justify-center items-center py-3"
+              >
                 Add to Cart <ShoppingCartIcon />
               </button>
             </div>

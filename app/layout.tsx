@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Unbounded, Merienda } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Layout/Navbar/Navbar";
 import { Toaster } from "react-hot-toast";
+import Initializer from "@/components/Initializer";
 
 const unbounded = Unbounded({
   variable: "--font-unbounded",
@@ -41,6 +42,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${unbounded.variable} ${merienda.variable} antialiased`}
       >
+        <Initializer />
         <Navbar />
         {children}
         <Toaster position="top-right" reverseOrder={false} />

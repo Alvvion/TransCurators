@@ -15,7 +15,7 @@ export async function register(formData: FormData) {
     if (!user.email || !user.password || !user.name) {
       throw new Error("All fields are required.");
     }
-    dbConnect();
+    await dbConnect();
     const existingUser = await User.findOne({ email: user.email });
 
     if (existingUser) {
@@ -35,12 +35,16 @@ export async function register(formData: FormData) {
     const token = await createSession(payload);
 
     return {
+      status: true,
       message: "Registered Successfully",
       token,
-      user: payload,
+      user: payload.user,
     };
   } catch (error) {
-    throw error;
+    return {
+      status: false,
+      error: error instanceof Error ? error.message : "Registration failed",
+    };
   }
 }
 
@@ -54,7 +58,7 @@ export async function login(formData: FormData) {
     if (!user.email || !user.password) {
       throw new Error("Email and password are required.");
     }
-    dbConnect();
+    await dbConnect();
     const existingUser = await User.findOne({ email: user.email });
 
     if (!existingUser) {
@@ -78,13 +82,15 @@ export async function login(formData: FormData) {
     const token = await createSession(payload);
 
     return {
+      status: true,
       message: "Registered Successfully",
       token,
-      user: payload,
+      user: payload.user,
     };
   } catch (error) {
-    throw error;
+    return {
+      status: false,
+      error: error instanceof Error ? error.message : "Login failed",
+    };
   }
-
-  return;
 }

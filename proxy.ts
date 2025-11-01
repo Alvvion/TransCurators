@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 const SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 // Protected routes
-const protectedRoutes = ["/cart", "/wishlist", "/checkout", "/profile"];
+const protectedRoutes = ["/checkout", "/profile"];
 const authPages = ["/login"];
 
 export async function proxy(req: NextRequest) {

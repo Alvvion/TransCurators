@@ -1,8 +1,52 @@
-"use server";
+"use client";
 
-import { loginAction, registerAction } from "@/actions/actions";
+import toast from "react-hot-toast";
+import { useUserStore, useCartStore, useWishlistStore } from "@/utils/store";
+import { getProductCountAction } from "@/actions/actions";
+import { login, register } from "@/actions/auth";
+import { useRouter } from "next/navigation";
 
-const SignIn = async () => {
+const SignIn = () => {
+  const router = useRouter();
+  const setUser = useUserStore((state) => state.setUser);
+  const setCartCount = useCartStore((state) => state.setCartCount);
+  const setWishlistCount = useWishlistStore((state) => state.setWishlistCount);
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const result = await login(formData);
+    if (result.status) {
+      toast.success(`Welcome ${result.user!.name || ""}\nYou are logged in`);
+      setUser(result.user!);
+      const counter = await getProductCountAction(formData);
+      if (counter) {
+        setCartCount(counter.cartCount || 0);
+        setWishlistCount(counter.wishlistCount || 0);
+      }
+      router.replace("/");
+    } else {
+      toast.error(`Error occured ${result.error}`);
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const result = await register(formData);
+    if (result.status) {
+      toast.success(`Welcome ${result.user!.name || ""}\nYou have registed`);
+      setUser(result.user!);
+      const counter = await getProductCountAction(formData);
+      if (counter) {
+        setCartCount(counter.cartCount || 0);
+        setWishlistCount(counter.wishlistCount || 0);
+      }
+      router.replace("/");
+    } else {
+      toast.error(`Error occured ${result.error}`);
+    }
+  };
   return (
     <>
       <div className="px-[8%] lg:px-[12%] bg-[#e6f9ef] py-5">
@@ -15,7 +59,7 @@ const SignIn = async () => {
           {/* Login */}
           <div className="w-full lg:w-1/2 gap-3 border border-gray-300 px-5 py-8 rounded-lg hover:border-(--primary-color)">
             <h2 className="Unbounded text-xl mb-10 text-center">Login</h2>
-            <form action={loginAction}>
+            <form onSubmit={handleLogin}>
               <div className="flex flex-col mb-5 gap-2">
                 <label htmlFor="email" className="Unbounded mb-2">
                   Email *
@@ -39,7 +83,7 @@ const SignIn = async () => {
               <div className="flex items-center gap-5 mb-8">
                 <button
                   type="submit"
-                  className="px-8 py-3 rounded-md text-white Unbounded bg-(--primary-color) mx-auto"
+                  className="px-8 py-3 rounded-md text-white Unbounded bg-(--primary-color) mx-auto cursor-pointer"
                 >
                   Login
                 </button>
@@ -49,7 +93,7 @@ const SignIn = async () => {
           {/* Register */}
           <div className="w-full lg:w-1/2 gap-3 border border-gray-300 px-5 py-8 rounded-lg hover:border-(--primary-color)">
             <h2 className="Unbounded text-xl mb-10 text-center">Login</h2>
-            <form action={registerAction}>
+            <form onSubmit={handleRegister}>
               <div className="flex flex-col mb-5 gap-2">
                 <label htmlFor="name" className="Unbounded mb-2">
                   Name *
@@ -82,7 +126,7 @@ const SignIn = async () => {
               <div className="flex items-center gap-5 mb-8">
                 <button
                   type="submit"
-                  className="px-8 py-3 rounded-md text-white Unbounded bg-(--primary-color) mx-auto"
+                  className="px-8 py-3 rounded-md text-white Unbounded bg-(--primary-color) mx-auto cursor-pointer"
                 >
                   Register
                 </button>

@@ -4,6 +4,14 @@ import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 const SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+type SessionPayload = {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
+};
+
 export async function encrypt(payload: Record<string, unknown>) {
   return jwt.sign(payload, SECRET, { algorithm: "HS256", expiresIn: "1h" });
 }
@@ -37,8 +45,15 @@ export async function deleteSession() {
   cookieStore.set("session", "", { expires: new Date(0), httpOnly: true });
 }
 
-export async function getSession() {
+export async function getSession(): Promise<SessionPayload | null> {
   const cookieStore = await cookies();
   const session = cookieStore.get("session")?.value;
   if (!session) return null;
+  try {
+    const decoded = (await decrypt(session)) as SessionPayload;
+    return decoded;
+  } catch {
+    await deleteSession();
+    return null;
+  }
 }

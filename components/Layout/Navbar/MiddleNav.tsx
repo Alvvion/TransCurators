@@ -9,20 +9,38 @@ import {
   ShoppingCartIcon,
 } from "lucide-react";
 
+import BestSales from "@/constants/BestSales.json";
+import Featured from "@/constants/Featured.json";
+import HotDeals from "@/constants/HotDeals.json";
+import NewArrivals from "@/constants/NewArrivals.json";
+import TopRated from "@/constants/TopRated.json";
 import products from "@/constants/jsonData.json";
-import { Product } from "@/components/Banners/Deals";
+import OnSale from "@/constants/OnSale.json";
+import OrganicFoods from "@/constants/OrganicFoods.json";
+import Recommend from "@/constants/Recommend.json";
+import TopSelling from "@/constants/TopSelling.json";
 import Image from "next/image";
+import type { AllProduct } from "@/app/(products)/shop/page";
+import { useCartStore, useWishlistStore } from "@/utils/store";
 
-type MiddleNavProps = {
-  cartCount: number;
-  wishlistCount: number;
-};
-
-const MiddleNav: React.FC<MiddleNavProps> = ({ cartCount, wishlistCount }) => {
+const MiddleNav = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const allProducts: Product[] = useMemo(() => [...products], []);
-
+  const allProducts: AllProduct[] = useMemo(
+    () => [
+      ...products,
+      ...BestSales,
+      ...Featured,
+      ...HotDeals,
+      ...NewArrivals,
+      ...TopRated,
+      ...OnSale,
+      ...OrganicFoods,
+      ...Recommend,
+      ...TopSelling,
+    ],
+    []
+  );
   const results = useMemo(() => {
     const trimmed = searchTerm.trim().toLowerCase();
     if (!trimmed) return [];
@@ -30,6 +48,9 @@ const MiddleNav: React.FC<MiddleNavProps> = ({ cartCount, wishlistCount }) => {
       product.title.toLowerCase().includes(trimmed)
     );
   }, [allProducts, searchTerm]);
+
+  const { cartCount } = useCartStore();
+  const { wishlistCount } = useWishlistStore();
 
   return (
     <nav className="w-full bg-(--primary-light) border-b border-gray-300 relative">

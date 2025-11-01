@@ -1,12 +1,48 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
-import type { Product } from "@/components/Banners/Deals";
+import { useEffect, useState } from "react";
 import { ShoppingCartIcon, StarIcon, XIcon } from "lucide-react";
+import { useCartStore, useUserStore, useWishlistStore } from "@/utils/store";
+import toast from "react-hot-toast";
+import { getWishlist } from "@/actions/products";
+import { CartItem } from "../cart/page";
+import { handleAddToCart, handleAddToWishlist } from "@/utils/clientFunctions";
 
 const Wishlist = () => {
-  const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const user = useUserStore((state) => state.user);
+  const incrementCart = useCartStore((state) => state.incrementCart);
+  const incrementWishlist = useWishlistStore(
+    (state) => state.incrementWishlist
+  );
+  const decrementWishlist = useWishlistStore(
+    (state) => state.decrementWishlist
+  );
+
+  useEffect(() => {
+    const loadWishlist = async () => {
+      setLoading(true);
+      try {
+        const formData = new FormData();
+        formData.append("userId", user.id);
+        formData.append("guest", user.name === "Guest" ? "true" : "false");
+        const result = await getWishlist(formData);
+        if (result.status) {
+          setWishlistItems(result.wishlist);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("failed to load cart");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadWishlist();
+  }, [user.id, user.name]);
+
   return (
     <div>
       <div className="px-[8%] lg:px-[12%] bg-[#e6f9ef] py-5">
@@ -17,8 +53,10 @@ const Wishlist = () => {
         </div>
       </div>
       <div className="px-[8%] lg:px-[12%] py-10">
-        {wishlistItems.length === 0 ? (
-          <p className="text-lg bg-red-200 px-5 py-2">Your Wishlist is empty</p>
+        {loading || wishlistItems.length === 0 ? (
+          <p className="text-lg bg-red-200 px-5 py-2">
+            {loading ? "Cart is loading" : "Cart is empty"}
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <div className="overflow-x-auto">
@@ -44,7 +82,7 @@ const Wishlist = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {wishlistItems.map((item) => (
+                  {wishlistItems.map((item, index) => (
                     <tr key={item.Id} className="border-b border-gray-300">
                       <td className="py-3 px-4 flex items-center gap-3 border-r border-gray-300">
                         <img
@@ -58,7 +96,7 @@ const Wishlist = () => {
                           </p>
                           <span className="flex items-center text-base text-yellow-500">
                             <StarIcon className="fill-yellow-500 size-4" />
-                            {item.review}
+                            (17+)
                           </span>
                         </div>
                       </td>
@@ -69,13 +107,37 @@ const Wishlist = () => {
                         In Stock
                       </td>
                       <td className="px-4 border-r border-gray-300">
-                        <button className="w-full px-4 py-2 my-2 text-lg font-semibold text-(--primary-color) bg-(--primary-light) rounded-md hover:bg-(--primary-color) hover:text-white transition-colors duration-300 flex justify-center items-center">
+                        <button
+                          onClick={() =>
+                            handleAddToCart(
+                              item,
+                              user.id,
+                              incrementCart,
+                              user.name === "Guest" ? "true" : "false"
+                            )
+                          }
+                          className="w-full px-4 py-2 my-2 text-lg font-semibold text-(--primary-color) bg-(--primary-light) rounded-md hover:bg-(--primary-color) hover:text-white transition-colors duration-300 flex justify-center items-center"
+                        >
                           Add to Cart
                           <ShoppingCartIcon />
                         </button>
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <button className="text-red-500 hover:text-red-700 cursor-pointer flex items-center justify-center">
+                        <button
+                          onClick={() => {
+                            handleAddToWishlist(
+                              item,
+                              user.id,
+                              incrementWishlist,
+                              decrementWishlist,
+                              user.name === "Guest" ? "true" : "false"
+                            );
+                            setWishlistItems((prev) =>
+                              prev.filter((p, i) => i !== index)
+                            );
+                          }}
+                          className="text-red-500 hover:text-red-700 cursor-pointer flex items-center justify-center"
+                        >
                           <XIcon /> Remove
                         </button>
                       </td>
@@ -86,7 +148,7 @@ const Wishlist = () => {
 
               {/* Mobile List */}
               <div className="lg:hidden space-y-4">
-                {wishlistItems.map((item) => (
+                {wishlistItems.map((item, index) => (
                   <div
                     key={item.Id}
                     className="border border-gray-300 p-4 bg-white"
@@ -103,7 +165,7 @@ const Wishlist = () => {
                         </p>
                         <span className="flex items-center text-sm text-yellow-500">
                           <StarIcon className="fill-yellow-500 size-4 me-1" />
-                          {item.review}
+                          (17+)
                         </span>
                       </div>
                     </div>
@@ -112,7 +174,17 @@ const Wishlist = () => {
                         <p className="Unbounded text-sm my-4">
                           Price: {item.price}
                         </p>
-                        <button className="flex justify-center items-center px-4 py-2 text-sm font-semibold text-(--primary-color) bg-(--primary-light) hover:bg-(--primary-color) hover:text-white transition-colors duration-300">
+                        <button
+                          onClick={() =>
+                            handleAddToCart(
+                              item,
+                              user.id,
+                              incrementCart,
+                              user.name === "Guest" ? "true" : "false"
+                            )
+                          }
+                          className="flex justify-center items-center px-4 py-2 text-sm font-semibold text-(--primary-color) bg-(--primary-light) hover:bg-(--primary-color) hover:text-white transition-colors duration-300"
+                        >
                           Add to Cart
                           <ShoppingCartIcon />
                         </button>
@@ -121,7 +193,21 @@ const Wishlist = () => {
                         <p className="Unbounded text-sm my-4">
                           Status: In Stock
                         </p>
-                        <button className="text-red-500 hover:text-red-700 cursor-pointer flex items-center justify-center">
+                        <button
+                          onClick={() => {
+                            handleAddToWishlist(
+                              item,
+                              user.id,
+                              incrementWishlist,
+                              decrementWishlist,
+                              user.name === "Guest" ? "true" : "false"
+                            );
+                            setWishlistItems((prev) =>
+                              prev.filter((p, i) => i !== index)
+                            );
+                          }}
+                          className="text-red-500 hover:text-red-700 cursor-pointer flex items-center justify-center"
+                        >
                           <XIcon /> Remove
                         </button>
                       </div>

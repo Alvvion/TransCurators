@@ -2,11 +2,12 @@
 
 import { dealData } from "@/constants/banners";
 import products from "@/constants/jsonData.json";
+import { handleAddToCart } from "@/utils/clientFunctions";
 import cn from "@/utils/cn";
+import { useCartStore, useUserStore } from "@/utils/store";
 import { ArrowRightIcon, ShoppingCartIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import toast from "react-hot-toast";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -21,9 +22,8 @@ export type Product = {
 };
 
 const Deals = () => {
-  const handleAddToCart = (product: Product) => {
-    toast.success(`${product.title} added to cart`);
-  };
+  const user = useUserStore((state) => state.user);
+  const incrementCart = useCartStore((state) => state.incrementCart);
   return (
     <div className="px-[8%] lg:px-[12%] py-10">
       <div className="title my-10  w-full flex flex-col  lg:flex-row justify-between items-start gap-5">
@@ -90,7 +90,14 @@ const Deals = () => {
                 />
                 <div className="absolute top-0 right-0 flex justify-between items-center mt-2">
                   <button
-                    onClick={() => handleAddToCart(product)}
+                    onClick={() =>
+                      handleAddToCart(
+                        product,
+                        user.id,
+                        incrementCart,
+                        user.name === "Guest" ? "true" : "false"
+                      )
+                    }
                     className="px-4 py-2 font-semibold text-(--primary-color) bg-(--primary-light) rounded-full text-base hover:bg-(--primary-color) hover:text-white cursor-pointer transition-all flex justify-center items-center"
                   >
                     Add <ShoppingCartIcon />
