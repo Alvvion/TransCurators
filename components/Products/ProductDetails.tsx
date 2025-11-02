@@ -20,7 +20,7 @@ import {
   useWishlistStore,
   useWishlistHeartStore,
 } from "@/utils/store";
-import { handleAddToWishlist } from "@/utils/clientFunctions";
+import { handleAddToCart, handleAddToWishlist } from "@/utils/clientFunctions";
 
 type ProductDetailsProps = {
   id: string;
