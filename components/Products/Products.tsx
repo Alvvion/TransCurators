@@ -7,6 +7,13 @@ import Link from "next/link";
 
 import type { AllProduct } from "@/app/(products)/shop/page";
 import cn from "@/utils/cn";
+import { handleAddToCart, handleAddToWishlist } from "@/utils/clientFunctions";
+import {
+  useCartStore,
+  useUserStore,
+  useWishlistStore,
+  useWishlistHeartStore,
+} from "@/utils/store";
 
 type ProductsProps = {
   products: AllProduct[];
@@ -19,6 +26,16 @@ const Products: React.FC<ProductsProps> = ({ products }) => {
   const [isNew, setIsNew] = useState(false);
   const [filteredProducts, setFilteredProducts] =
     useState<AllProduct[]>(products);
+  const { wishlist, toggleWishlist } = useWishlistHeartStore();
+
+  const user = useUserStore((state) => state.user);
+  const incrementCart = useCartStore((state) => state.incrementCart);
+  const incrementWishlist = useWishlistStore(
+    (state) => state.incrementWishlist
+  );
+  const decrementWishlist = useWishlistStore(
+    (state) => state.decrementWishlist
+  );
 
   const computedFiltered = useMemo(() => {
     return products.filter((p) => {
@@ -122,8 +139,28 @@ const Products: React.FC<ProductsProps> = ({ products }) => {
                       height={180}
                       className="object-contain mt-10"
                     />
-                    <button className="absolute top-0 left-0 w-12 h-12 rounded-full text-(--primary-color) hover:bg-(--primary-color) hover:text-white transition-colors duration-300 flex justify-center items-center">
-                      <HeartIcon className="text-xl" />
+                    <button
+                      onClick={() => {
+                        handleAddToWishlist(
+                          product,
+                          user.id,
+                          incrementWishlist,
+                          decrementWishlist,
+                          user.name === "Guest" ? "true" : "false"
+                        );
+                        toggleWishlist(product.Id);
+                      }}
+                      className="absolute top-0 left-0 w-12 h-12 rounded-full text-(--primary-color) hover:bg-(--primary-color) hover:text-white transition-colors duration-300 flex justify-center items-center"
+                    >
+                      <HeartIcon
+                        className={cn(
+                          "text-xl",
+                          wishlist.find((p) => p.itemId === product.Id)
+                            ?.wishlisted
+                            ? "fill-red-600 text-red-600"
+                            : ""
+                        )}
+                      />
                     </button>
                     <span
                       className={cn(
@@ -166,7 +203,17 @@ const Products: React.FC<ProductsProps> = ({ products }) => {
                       Sold: {product.sold}
                     </p>
                   </Link>
-                  <button className="w-full px-4 my-2 text-lg font-semibold text-(--primary-color) bg-(--primary-light) rounded-md hover:bg-(--primary-color) hover:text-white cursor-pointer transition-all flex justify-center items-center py-3">
+                  <button
+                    onClick={() =>
+                      handleAddToCart(
+                        product,
+                        user.id,
+                        incrementCart,
+                        user.name === "Guest" ? "true" : "false"
+                      )
+                    }
+                    className="w-full px-4 my-2 text-lg font-semibold text-(--primary-color) bg-(--primary-light) rounded-md hover:bg-(--primary-color) hover:text-white cursor-pointer transition-all flex justify-center items-center py-3"
+                  >
                     Add to Cart <ShoppingCartIcon />
                   </button>
                 </div>

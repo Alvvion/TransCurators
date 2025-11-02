@@ -1,7 +1,8 @@
 "use client";
 
-import { addToCart, addToWishlist } from "@/actions/products";
+import { addToCart, addToWishlist, removeFromCart } from "@/actions/products";
 import { CartItem } from "@/app/(products)/cart/page";
+import { AllProduct } from "@/app/(products)/shop/page";
 import { Product } from "@/components/Banners/Deals";
 import { startTransition } from "react";
 import toast from "react-hot-toast";
@@ -17,7 +18,7 @@ export function getGuestSession() {
 }
 
 export const handleAddToCart = (
-  product: Product | CartItem,
+  product: Product | CartItem | AllProduct,
   id: string,
   incrementCart: () => void,
   guest = "false"
@@ -44,8 +45,31 @@ export const handleAddToCart = (
   });
 };
 
-export const handleAddToWishlist = (
+export const handleRemoveFromCart = (
   product: Product | CartItem,
+  id: string,
+  decrementCart: () => void,
+  guest = "false"
+) => {
+  const formData = new FormData();
+  formData.append("Id", product.Id);
+  formData.append("userId", id);
+  formData.append("guest", guest);
+  startTransition(async () => {
+    try {
+      const result = await removeFromCart(formData);
+      if (result.status) {
+        toast.success(result.message!);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to add to cart");
+    }
+  });
+};
+
+export const handleAddToWishlist = (
+  product: Product | CartItem | AllProduct,
   id: string,
   incrementWishlist: () => void,
   decrementWishlist: () => void,

@@ -1,17 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import products from "@/constants/Recommend.json";
 import type { Product } from "../Banners/Deals";
 import { HeartIcon, ShoppingCartIcon, StarIcon } from "lucide-react";
 import Link from "next/link";
 import cn from "@/utils/cn";
-import { useCartStore, useUserStore, useWishlistStore } from "@/utils/store";
+import {
+  useCartStore,
+  useUserStore,
+  useWishlistStore,
+  useWishlistHeartStore,
+} from "@/utils/store";
 import { handleAddToCart, handleAddToWishlist } from "@/utils/clientFunctions";
 
 type SaleProduct = Product & {
   sale: string;
+};
+
+export type WishlistProduct = {
+  itemId: string;
+  wishlisted: boolean;
 };
 
 const Recommend = () => {
@@ -24,9 +33,7 @@ const Recommend = () => {
     (state) => state.decrementWishlist
   );
 
-  const [wishlistedProduct, setWishlistedProduct] = useState(
-    Array(products.length).fill(false)
-  );
+  const { wishlist, toggleWishlist } = useWishlistHeartStore();
 
   return (
     <div className="px-[8%] lg:px-[12%] py-10">
@@ -37,7 +44,7 @@ const Recommend = () => {
       {/* Products */}
       <div className="my-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          {products.map((product: SaleProduct, i: number) => (
+          {products.map((product: SaleProduct) => (
             <div
               key={product.Id}
               className="product-wrap border border-gray-300 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-all hover:border-(--primary-color) cursor-pointer duration-300"
@@ -59,18 +66,16 @@ const Recommend = () => {
                       decrementWishlist,
                       user.name === "Guest" ? "true" : "false"
                     );
-                    setWishlistedProduct((prev) => {
-                      const updated = [...prev];
-                      updated[i] = !updated[i];
-                      return updated;
-                    });
+                    toggleWishlist(product.Id);
                   }}
                   className="absolute top-0 left-0 w-12 h-12 rounded-full text-(--primary-color) hover:bg-(--primary-color) hover:text-white transition-colors duration-300 flex justify-center items-center"
                 >
                   <HeartIcon
                     className={cn(
                       "text-xl",
-                      wishlistedProduct[i] && "fill-red-600 text-red-600"
+                      wishlist.find((p) => p.itemId === product.Id)?.wishlisted
+                        ? "fill-red-600 text-red-600"
+                        : ""
                     )}
                   />
                 </button>

@@ -26,6 +26,10 @@ export async function addToCart(formData: FormData) {
       throw new Error("Something wrong with the product");
     }
 
+    if (!product.userId) {
+      throw new Error("Missing userId");
+    }
+
     const query = product.guest
       ? { guestId: product.userId }
       : { user: product.userId };
@@ -99,6 +103,9 @@ export async function removeFromCart(formData: FormData) {
   const guest = formData.get("guest")?.toString() === "true" ? true : false;
 
   try {
+    if (!userId) {
+      throw new Error("Missing userId");
+    }
     const query = guest ? { guestId: userId } : { user: userId };
     await dbConnect();
     const cart = await Cart.findOne(query);
@@ -152,6 +159,9 @@ export async function addToWishlist(formData: FormData) {
   };
 
   try {
+    if (!product.userId) {
+      throw new Error("Missing userId");
+    }
     let removed = false;
     if (!product.Id) {
       throw new Error("Something wrong with the product");
@@ -186,7 +196,6 @@ export async function addToWishlist(formData: FormData) {
       );
       if (productIndex !== -1) {
         // Delete product
-        console.log("Should Delete");
         wishlist.products.splice(productIndex, 1);
         removed = true;
       } else {
@@ -250,6 +259,9 @@ export async function getCart(formData: FormData) {
   const userId = formData.get("userId")?.toString();
   const guest = formData.get("guest")?.toString() === "true" ? true : false;
   try {
+    if (!userId) {
+      throw new Error("Missing userId");
+    }
     const query = guest ? { guestId: userId } : { user: userId };
     await dbConnect();
     const cart = await Cart.findOne(query);
@@ -276,6 +288,9 @@ export async function getWishlist(formData: FormData) {
   const userId = formData.get("userId")?.toString();
   const guest = formData.get("guest")?.toString() === "true" ? true : false;
   try {
+    if (!userId) {
+      throw new Error("Missing userId");
+    }
     const query = guest ? { guestId: userId } : { user: userId };
     await dbConnect();
     const wishlist = await Wishlist.findOne(query);
@@ -306,6 +321,9 @@ export async function changeCartQunantity(
   const guest = formData.get("guest")?.toString() === "true" ? true : false;
 
   try {
+    if (!userId) {
+      throw new Error("Missing userId");
+    }
     const query = guest ? { guestId: userId } : { user: userId };
     await dbConnect();
     const cart = await Cart.findOne(query);

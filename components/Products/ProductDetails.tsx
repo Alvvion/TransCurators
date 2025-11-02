@@ -14,6 +14,13 @@ import {
 
 import SatisfactionIcon from "@/public/satisfaction-icon.png";
 import Recommend from "./Recommend";
+import {
+  useUserStore,
+  useCartStore,
+  useWishlistStore,
+  useWishlistHeartStore,
+} from "@/utils/store";
+import { handleAddToWishlist } from "@/utils/clientFunctions";
 
 type ProductDetailsProps = {
   id: string;
@@ -21,6 +28,15 @@ type ProductDetailsProps = {
 };
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ id, products }) => {
+  const user = useUserStore((state) => state.user);
+  const incrementCart = useCartStore((state) => state.incrementCart);
+  const incrementWishlist = useWishlistStore(
+    (state) => state.incrementWishlist
+  );
+  const decrementWishlist = useWishlistStore(
+    (state) => state.decrementWishlist
+  );
+  const { wishlist, toggleWishlist } = useWishlistHeartStore();
   if (!id) return <Products products={products} />;
 
   const product = products.find((p) => String(p.Id) === String(id));
@@ -80,11 +96,37 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ id, products }) => {
                   </div>
                 </div>
                 <div className=" flex gap-5 justify-start items-center">
-                  <button className="w-full px-4 my-2 text-lg font-semibold text-(--primary-light) bg-(--primary-color) rounded-md hover:bg-[#0C9A41] hover:text-white cursor-pointer transition-all flex justify-center items-center py-3 gap-4">
+                  <button
+                    onClick={() =>
+                      handleAddToCart(
+                        product,
+                        user.id,
+                        incrementCart,
+                        user.name === "Guest" ? "true" : "false"
+                      )
+                    }
+                    className="w-full px-4 my-2 text-lg font-semibold text-(--primary-light) bg-(--primary-color) rounded-md hover:bg-[#0C9A41] hover:text-white cursor-pointer transition-all flex justify-center items-center py-3 gap-4"
+                  >
                     <ShoppingCartIcon /> Add to Cart
                   </button>
-                  <button className="w-full px-4 my-2 text-lg font-semibold text-(--primary-color) bg-(--primary-light) rounded-md hover:bg-(--primary-color) hover:text-white cursor-pointer transition-all flex justify-center items-center py-3 gap-4">
-                    <HeartIcon /> Add to Wishlist
+                  <button
+                    onClick={() => {
+                      handleAddToWishlist(
+                        product,
+                        user.id,
+                        incrementWishlist,
+                        decrementWishlist,
+                        user.name === "Guest" ? "true" : "false"
+                      );
+                      toggleWishlist(product.Id);
+                    }}
+                    className="w-full px-4 my-2 text-lg font-semibold text-(--primary-color) bg-(--primary-light) rounded-md hover:bg-(--primary-color) hover:text-white cursor-pointer transition-all flex justify-center items-center py-3 gap-4"
+                  >
+                    <HeartIcon />{" "}
+                    {wishlist.find((p) => p.itemId === product.Id)?.wishlisted
+                      ? "Remove from"
+                      : "Add to"}{" "}
+                    Wishlist
                   </button>
                 </div>
               </div>
